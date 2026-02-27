@@ -1,5 +1,9 @@
 # DTP Attack - VLAN Hopping (Salto de VLAN)
 
+## Objetivo del Script
+
+Forzar al puerto del switch a negociar un enlace Trunk mediante paquetes DTP, permitiendo al atacante acceder al tráfico de múltiples VLANs (VLAN Hopping).
+
 ## Descripción
 
 Este proyecto demuestra un ataque de **DTP (Dynamic Trunking Protocol) Attack** para realizar **VLAN Hopping**. El ataque explota la configuración automática de puertos en switches Cisco para forzar la negociación de un enlace Trunk, permitiendo al atacante acceder al tráfico de múltiples VLANs.
@@ -19,6 +23,25 @@ Este proyecto demuestra un ataque de **DTP (Dynamic Trunking Protocol) Attack** 
 
 - **Segmento de Red:** 10.14.89.0/26 (Rango útil: .1 a .62)
 - **Dominio VTP:** `branyel.local`
+- **VLAN:** Nativa (VLAN 1)
+
+## Capturas de Pantalla
+
+> Las capturas demuestran la ejecución exitosa del ataque en el laboratorio.
+
+| Captura | Descripción |
+|---------|-------------|
+| ![Topología](Topologia_GNS3.png) | Topología de red en GNS3 |
+
+## Parámetros del Script
+
+| Parámetro | Valor | Descripción |
+|-----------|-------|-------------|
+| `iface` | `eth0` | Interfaz de red del atacante |
+| `dst` | `01:00:0c:cc:cc:cc` | Dirección multicast de Cisco |
+| `code` | `0x2004` | Código SNAP para DTP |
+| `inter` | `2` | Intervalo entre paquetes (segundos) |
+| `loop` | `1` | Envío continuo de paquetes |
 
 ## ¿Qué es DTP?
 
@@ -26,10 +49,15 @@ Este proyecto demuestra un ataque de **DTP (Dynamic Trunking Protocol) Attack** 
 
 ## Requisitos
 
+### Software
 - Python 3.x
 - Scapy (`pip install scapy`)
+- **Yersinia** (alternativa para el ataque)
 - Permisos de superusuario (root)
+
+### Red
 - Acceso a un puerto de switch con DTP habilitado
+- Puerto en modo "dynamic auto" o "dynamic desirable"
 
 ## Instalación
 
@@ -163,6 +191,39 @@ DTP_Attack_VLAN_Hopping/
 ├── Topologia_GNS3.png   # Diagrama de la topología de red
 └── README.md            # Esta documentación
 ```
+
+## Ataque Alternativo con Yersinia
+
+Además del script en Python, se puede realizar el mismo ataque utilizando **Yersinia**, una herramienta especializada en ataques de capa 2.
+
+### Instalación de Yersinia
+```bash
+sudo apt update
+sudo apt install yersinia
+```
+
+### Uso de Yersinia (Modo Interactivo)
+```bash
+sudo yersinia -I
+```
+
+1. Presionar `g` para ir al menú de protocolos
+2. Seleccionar `DTP`
+3. Presionar `x` para lanzar el ataque
+4. Seleccionar tipo de ataque: **enabling trunking**
+
+### Uso de Yersinia (Línea de comandos)
+```bash
+# Ataque DTP para habilitar trunking
+sudo yersinia dtp -attack 1 -i eth0
+```
+
+### Parámetros de Yersinia para DTP
+
+| Parámetro | Descripción |
+|-----------|-------------|
+| `-attack 1` | Habilitar trunking en el puerto |
+| `-i eth0` | Interfaz de red a utilizar |
 
 ## Tecnologías Utilizadas
 
